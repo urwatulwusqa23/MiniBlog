@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -15,12 +15,23 @@ namespace MiniBlog.web
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // ── Database ──────────────────────────────────────────────────────
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection")));
+            // Database — auto-selects provider from connection string
+            // Local dev:  "Data Source=(localdb)..." -> SQL Server
+            // Production: "Host=..."                  -> PostgreSQL (Neon/Render)
+            var connStr  = builder.Configuration.GetConnectionString("DefaultConnection")!;
+            var isPostgres = connStr.Contains("Host=") ||
+                             connStr.StartsWith("postgresql", StringComparison.OrdinalIgnoreCase) ||
+                             connStr.StartsWith("postgres", StringComparison.OrdinalIgnoreCase);
 
-            // ── App Services ──────────────────────────────────────────────────
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                if (isPostgres)
+                    options.UseNpgsql(connStr);
+                else
+                    options.UseSqlServer(connStr);
+            });
+
+            // App services
             builder.Services.AddScoped<IUserService,         UserRepository>();
             builder.Services.AddScoped<ITweetService,        TweetRepository>();
             builder.Services.AddScoped<ICommentService,      commentRepository>();
@@ -30,7 +41,7 @@ namespace MiniBlog.web
             builder.Services.AddScoped<IFollowingService,    FollowingRepository>();
             builder.Services.AddScoped<IFollowerService,     FollowerRepository>();
 
-            // ── JWT Authentication ────────────────────────────────────────────
+            // JWT Authentication
             var jwtKey = builder.Configuration["Jwt:Key"]!;
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -47,7 +58,7 @@ namespace MiniBlog.web
                                                        Encoding.UTF8.GetBytes(jwtKey))
                     };
 
-                    // Let SignalR hub receive JWT from the query string
+                    // SignalR passes JWT in query string
                     options.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = ctx =>
@@ -65,7 +76,7 @@ namespace MiniBlog.web
 
             builder.Services.AddAuthorization();
 
-                        // CORS
+            // CORS — origins configured via appsettings / environment variables
             var allowedOrigins = builder.Configuration
                 .GetSection("Cors:AllowedOrigins")
                 .Get<string[]>() ?? new[] { "http://localhost:4200" };
@@ -79,20 +90,21 @@ namespace MiniBlog.web
                           .AllowCredentials());
             });
 
-            // ── Controllers + SignalR ─────────────────────────────────────────
             builder.Services.AddControllers();
             builder.Services.AddSignalR();
 
             var app = builder.Build();
 
-            // Auto-apply EF migrations on startup
+            // Apply DB schema on startup
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                db.Database.Migrate();
+                if (isPostgres)
+                    db.Database.EnsureCreated();   // provider-agnostic schema creation
+                else
+                    db.Database.Migrate();          // SQL Server migrations
             }
 
-            // ── Pipeline ──────────────────────────────────────────────────────
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler(errApp => errApp.Run(async ctx =>
@@ -105,19 +117,16 @@ namespace MiniBlog.web
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();   // serves /Profiles/* profile pictures
+            app.UseStaticFiles();
             app.UseCors("Angular");
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
             app.MapHub<NotificationHub>("/notificationHub");
-            // Angular SPA fallback - must come after MapControllers and MapHub
-            app.MapFallbackToFile("index.html");
-
+            app.MapFallbackToFile("index.html");   // Angular SPA fallback
 
             app.Run();
         }
     }
 }
-

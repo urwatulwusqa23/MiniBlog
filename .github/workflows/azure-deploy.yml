@@ -1,66 +1,29 @@
-name: Build & Deploy to Azure
+name: CI — Build Check
 
 on:
   push:
     branches: [master]
-  workflow_dispatch:
+  pull_request:
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # ── 1. Checkout ──────────────────────────────────────────────────────────
       - uses: actions/checkout@v4
 
-      # ── 2. Build Angular ─────────────────────────────────────────────────────
-      - name: Set up Node 18
-        uses: actions/setup-node@v4
+      # Angular build
+      - uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-
-      - name: Install Angular dependencies
-        run: npm ci
-
+      - run: npm ci
       - name: Build Angular (production)
         run: npm run build -- --configuration production
 
-      # ── 3. Copy Angular output → .NET wwwroot ────────────────────────────────
-      - name: Copy Angular build into wwwroot
-        run: cp -r dist/miniblog-angular/. MiniBlog/MiniBlog.web/wwwroot/
-
-      # ── 4. Build .NET app ────────────────────────────────────────────────────
-      - name: Set up .NET 8
-        uses: actions/setup-dotnet@v4
+      # .NET build
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-
-      - name: Publish .NET app
-        run: |
-          cd MiniBlog
-          dotnet publish MiniBlog.web/MiniBlog.web.csproj \
-            --configuration Release \
-            --output ./publish
-
-      # ── 5. Check whether Azure credentials are configured ────────────────────
-      - name: Check Azure credentials
-        id: check-creds
-        env:
-          PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        run: |
-          if [ -n "$PUBLISH_PROFILE" ]; then
-            echo "ready=true" >> $GITHUB_OUTPUT
-          else
-            echo "ready=false" >> $GITHUB_OUTPUT
-            echo "::warning::AZURE_WEBAPP_PUBLISH_PROFILE secret is not set — skipping deploy. See README for setup instructions."
-          fi
-
-      # ── 6. Deploy to Azure App Service (only when secret is present) ─────────
-      - name: Deploy to Azure Web App
-        if: steps.check-creds.outputs.ready == 'true'
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: MiniBlog/publish
+      - name: Build .NET (release)
+        run: dotnet build MiniBlog/MiniBlog.web/MiniBlog.web.csproj --configuration Release

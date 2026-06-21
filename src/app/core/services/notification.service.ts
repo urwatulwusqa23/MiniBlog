@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Notification } from '../models/models';
 import * as signalR from '@microsoft/signalr';
 import { ToastService } from './toast.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
@@ -16,8 +17,9 @@ export class NotificationService {
   startConnection(): void {
     if (this.hub && this.hub.state !== signalR.HubConnectionState.Disconnected) return;
 
+    const hubUrl = `${environment.apiUrl}/notificationHub`;
     this.hub = new signalR.HubConnectionBuilder()
-      .withUrl('/notificationHub', {
+      .withUrl(hubUrl, {
         accessTokenFactory: () => localStorage.getItem('token') ?? '',
       })
       .withAutomaticReconnect()
