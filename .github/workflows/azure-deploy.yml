@@ -43,8 +43,22 @@ jobs:
             --configuration Release \
             --output ./publish
 
-      # ── 5. Deploy to Azure App Service ───────────────────────────────────────
+      # ── 5. Check whether Azure credentials are configured ────────────────────
+      - name: Check Azure credentials
+        id: check-creds
+        env:
+          PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        run: |
+          if [ -n "$PUBLISH_PROFILE" ]; then
+            echo "ready=true" >> $GITHUB_OUTPUT
+          else
+            echo "ready=false" >> $GITHUB_OUTPUT
+            echo "::warning::AZURE_WEBAPP_PUBLISH_PROFILE secret is not set — skipping deploy. See README for setup instructions."
+          fi
+
+      # ── 6. Deploy to Azure App Service (only when secret is present) ─────────
       - name: Deploy to Azure Web App
+        if: steps.check-creds.outputs.ready == 'true'
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
