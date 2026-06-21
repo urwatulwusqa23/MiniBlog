@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -65,11 +65,15 @@ namespace MiniBlog.web
 
             builder.Services.AddAuthorization();
 
-            // ── CORS ──────────────────────────────────────────────────────────
+                        // CORS
+            var allowedOrigins = builder.Configuration
+                .GetSection("Cors:AllowedOrigins")
+                .Get<string[]>() ?? new[] { "http://localhost:4200" };
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("Angular", policy =>
-                    policy.WithOrigins("http://localhost:4200")
+                    policy.WithOrigins(allowedOrigins)
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials());
@@ -80,6 +84,13 @@ namespace MiniBlog.web
             builder.Services.AddSignalR();
 
             var app = builder.Build();
+
+            // Auto-apply EF migrations on startup
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                db.Database.Migrate();
+            }
 
             // ── Pipeline ──────────────────────────────────────────────────────
             if (!app.Environment.IsDevelopment())
@@ -101,8 +112,12 @@ namespace MiniBlog.web
 
             app.MapControllers();
             app.MapHub<NotificationHub>("/notificationHub");
+            // Angular SPA fallback - must come after MapControllers and MapHub
+            app.MapFallbackToFile("index.html");
+
 
             app.Run();
         }
     }
 }
+

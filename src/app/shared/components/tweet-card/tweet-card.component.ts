@@ -48,18 +48,37 @@ import { ToastService } from '../../../core/services/toast.service';
               @if (following()) { <i class="fas fa-check"></i> following } @else { + follow }
             </button>
           } @else {
-            <button class="delete-pill" (click)="onDelete()"><i class="fas fa-trash-can"></i></button>
+            <div class="owner-actions">
+              <button class="action-pill" title="Edit" (click)="onEdit()"><i class="fas fa-pen"></i></button>
+              <button class="action-pill danger" title="Delete" (click)="onDelete()"><i class="fas fa-trash-can"></i></button>
+            </div>
           }
         </div>
 
-        <!-- Post title + body -->
-        @if (postTitle()) {
-          <h3 class="bc-title">{{ postTitle() }}</h3>
-          @if (postBody()) {
-            <p class="bc-body">{{ postBody() }}</p>
-          }
+        <!-- Post content / inline edit -->
+        @if (editing()) {
+          <div class="edit-area">
+            <textarea class="edit-input" [(ngModel)]="editText" [maxlength]="280" rows="4" autofocus></textarea>
+            <div class="edit-foot">
+              <span class="edit-chars" [class.over]="editText.length > 260">{{ 280 - editText.length }} left</span>
+              <div class="edit-btns">
+                <button class="btn btn-ghost btn-sm" (click)="cancelEdit()">cancel</button>
+                <button class="btn btn-primary btn-sm" [disabled]="!editText.trim() || saving()" (click)="saveEdit()">
+                  @if (saving()) { <span class="spinner spinner-sm"></span> } @else { <i class="fas fa-check"></i> }
+                  save
+                </button>
+              </div>
+            </div>
+          </div>
         } @else {
-          <p class="bc-content">{{ vm.tweet.content }}</p>
+          @if (postTitle()) {
+            <h3 class="bc-title">{{ postTitle() }}</h3>
+            @if (postBody()) {
+              <p class="bc-body">{{ postBody() }}</p>
+            }
+          } @else {
+            <p class="bc-content">{{ vm.tweet.content }}</p>
+          }
         }
 
         <!-- Inline hashtag pills -->
@@ -232,13 +251,36 @@ import { ToastService } from '../../../core/services/toast.service';
       }
     }
 
-    .delete-pill {
+    .owner-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .action-pill {
       width: 30px; height: 30px; border-radius: 50%;
       border: 1px solid var(--border); background: transparent; color: var(--text-muted);
       cursor: pointer; display: flex; align-items: center; justify-content: center;
-      font-size: 11px; transition: var(--transition); flex-shrink: 0;
+      font-size: 11px; transition: var(--transition);
       &:hover { border-color: rgba(196,96,58,0.5); color: var(--terracotta); background: rgba(196,96,58,0.08); }
+      &.danger:hover { border-color: rgba(196,58,58,0.5); color: #e05555; background: rgba(196,58,58,0.08); }
     }
+
+    /* ── Inline edit ── */
+    .edit-area { margin-bottom: 12px; }
+
+    .edit-input {
+      width: 100%; background: var(--surface-2); border: 1.5px solid rgba(196,96,58,0.35);
+      border-radius: var(--radius-lg); color: var(--text-primary);
+      font-family: var(--font-display); font-style: italic; font-size: 17px;
+      padding: 11px 14px; outline: none; resize: none; line-height: 1.6;
+      transition: var(--transition); box-sizing: border-box;
+      &:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(196,96,58,0.09); }
+    }
+
+    .edit-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .edit-chars { font-size: 11px; color: var(--text-muted); &.over { color: var(--danger); } }
+    .edit-btns  { display: flex; gap: 8px; }
 
     /* ── Content ── */
     .bc-title {
@@ -370,6 +412,9 @@ export class TweetCardComponent implements OnInit {
   showLikers     = signal(false);
   likers         = signal<any[]>([]);
   likersLoading  = signal(false);
+  editing        = signal(false);
+  saving         = signal(false);
+  editText       = '';
   commentText    = '';
 
   private _commentLikes = signal<Record<number, { liked: boolean; count: number }>>({});
@@ -493,6 +538,29 @@ export class TweetCardComponent implements OnInit {
     this.tweetSvc.getLikers(this.vm.tweet.id).subscribe({
       next: r => { this.likers.set(r); this.likersLoading.set(false); },
       error: () => this.likersLoading.set(false),
+    });
+  }
+
+  onEdit(): void {
+    this.editText = this.vm.tweet.content;
+    this.editing.set(true);
+    this.showComments.set(false);
+  }
+
+  cancelEdit(): void { this.editing.set(false); }
+
+  saveEdit(): void {
+    const text = this.editText.trim();
+    if (!text || this.saving()) return;
+    this.saving.set(true);
+    this.tweetSvc.update(this.vm.tweet.id, text).subscribe({
+      next: () => {
+        this.vm.tweet.content = text;
+        this.editing.set(false);
+        this.saving.set(false);
+        this.toast.success('Post updated');
+      },
+      error: () => { this.saving.set(false); this.toast.error('Could not save'); },
     });
   }
 
