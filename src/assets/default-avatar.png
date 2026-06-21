@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#2a1f18"/>
+      <stop offset="100%" stop-color="#1a1108"/>
+    </radialGradient>
+    <radialGradient id="body" cx="50%" cy="30%" r="70%">
+      <stop offset="0%"   stop-color="#c4603a" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#8a3a1a" stop-opacity="0.4"/>
+    </radialGradient>
+    <clipPath id="circle">
+      <circle cx="50" cy="50" r="50"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <circle cx="50" cy="50" r="50" fill="url(#bg)"/>
+
+  <!-- Subtle ring border -->
+  <circle cx="50" cy="50" r="49" fill="none" stroke="rgba(196,96,58,0.3)" stroke-width="1"/>
+
+  <!-- Body silhouette clipped to circle -->
+  <g clip-path="url(#circle)">
+    <!-- Torso -->
+    <ellipse cx="50" cy="88" rx="30" ry="22" fill="url(#body)"/>
+    <!-- Head -->
+    <circle cx="50" cy="38" r="17" fill="rgba(196,96,58,0.55)"/>
+    <!-- Tiny leaf accent on head -->
+    <path d="M50,24 C47,16 54,14 55,20 C56,26 52,28 50,24z"
+          fill="rgba(122,140,106,0.7)" stroke="none"/>
+  </g>
+
+  <!-- Decorative star top-right -->
+  <path transform="translate(78,16)"
+        d="M0,-5 L1.2,-1.6 L4.8,-1.6 L1.9,.6 L3,4 L0,2 L-3,4 L-1.9,.6 L-4.8,-1.6 L-1.2,-1.6z"
+        fill="rgba(232,213,176,0.25)"/>
+</svg>

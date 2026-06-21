@@ -1,0 +1,30 @@
+# Angular / Node
+node_modules/
+dist/
+.angular/cache/
+*.js.map
+
+# ASP.NET Core / .NET
+MiniBlog/**/bin/
+MiniBlog/**/obj/
+MiniBlog/**/*.user
+MiniBlog/**/wwwroot/Profiles/
+
+# Secrets & local config
+appsettings.Development.json
+*.env
+.env
+
+# IDE
+.vscode/
+.vs/
+*.suo
+*.user
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code internal
+.claude/

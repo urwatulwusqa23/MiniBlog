@@ -1,0 +1,92 @@
+﻿
+body {
+    font-family: 'Arial', sans-serif;
+    background-image: url('../Images/781e0771841034f0c61ed86238686083.jpg'); /* Replace with the path to your image */
+    background-size: cover;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+}
+
+/* Container Styles */
+.following-list {
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+    margin: 50px 20px;
+    animation: fadeIn 1.5s ease-in-out; /* Slow fade-in effect */
+    text-align: center; /* Center-align content */
+}
+
+/* Heading Styles */
+h2 {
+    font-size: 28px;
+    color: #6a11cb; /* Purple for the heading */
+    margin-bottom: 20px;
+}
+
+/* Followers List */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    font-size: 18px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: rgba(240, 240, 240, 0.9); /* Light pastel background for items */
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Avatar Image */
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #6a11cb; /* Purple border around avatar */
+}
+
+/* Fade-In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px); /* Slight upward movement */
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .following-list {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    li {
+        font-size: 16px;
+        padding: 10px;
+    }
+}

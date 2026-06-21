@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="UseCases\Comment\" />
+    <Folder Include="UseCases\Follower\" />
+    <Folder Include="UseCases\Following\" />
+    <Folder Include="UseCases\Like\" />
+    <Folder Include="UseCases\Message\" />
+    <Folder Include="UseCases\Notification\" />
+    <Folder Include="UseCases\Tweet\" />
+    <Folder Include="UseCases\User\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiniBlog.Core\MiniBlog.Core.csproj" />
+    <ProjectReference Include="..\MiniBlog.Infrastructure\MiniBlog.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

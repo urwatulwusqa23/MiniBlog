@@ -1,0 +1,88 @@
+﻿@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body {
+    background-image: url('../Images/781e0771841034f0c61ed86238686083.jpg'); /* Replace with the path to your image */
+    background-size: cover; /* Ensure the image covers the entire viewport */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat;
+    font-family: 'Arial', sans-serif;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/*
+body {
+    background: #1d2e3f;
+    font-family: 'Arial', sans-serif;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}*/
+.welcome-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    animation: fadeIn 2s ease-in-out;
+}
+
+.welcome-content {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.welcome-content h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.create-account-btn {
+    width: 100%;
+    padding: 10px;
+    background: #e29545;
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+.create-account-btn:hover {
+    background: #2575fc;
+}
+
+.login-prompt {
+    margin-top: 20px;
+}
+
+.login-prompt a {
+    color: #6a11cb;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.login-prompt a:hover {
+    color: #2575fc;
+}

@@ -1,0 +1,52 @@
+﻿/* Background for the login/signup pages */
+.login-signup-background {
+ /* Light background for login/signup pages */
+    padding-top: 80px; /* Space for the fixed header */
+    min-height: 100vh; /* Ensure content area takes at least full height of the viewport */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fixed Header */
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    z-index: 1000; /* Ensure it's on top */
+}
+
+    .fixed-header .logo {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+/* Content Section */
+.content {
+    flex-grow: 1; /* Allow the content section to grow and take remaining space */
+    padding-bottom: 50px; /* Add space at the bottom for footer */
+}
+
+/* Footer */
+.footer {
+    padding: 20px;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    margin-top: auto;
+    width:100%;
+}
+
+    .footer a {
+        color: white;
+        margin: 0 10px;
+        text-decoration: none;
+    }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }

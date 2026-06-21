@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#2e1f14"/>
+      <stop offset="100%" stop-color="#160e08"/>
+    </radialGradient>
+    <clipPath id="circ"><circle cx="50" cy="50" r="50"/></clipPath>
+  </defs>
+
+  <!-- Background -->
+  <circle cx="50" cy="50" r="50" fill="url(#bg)"/>
+
+  <!-- Clipped body shapes -->
+  <g clip-path="url(#circ)">
+    <!-- Shoulders / torso -->
+    <ellipse cx="50" cy="95" rx="34" ry="26" fill="rgba(196,96,58,0.45)"/>
+    <!-- Neck -->
+    <rect x="44" y="62" width="12" height="14" rx="6" fill="rgba(196,96,58,0.45)"/>
+    <!-- Head -->
+    <circle cx="50" cy="52" r="19" fill="rgba(196,96,58,0.55)"/>
+    <!-- Inner face highlight -->
+    <circle cx="50" cy="50" r="14" fill="rgba(232,200,160,0.08)"/>
+  </g>
+
+  <!-- Outer ring -->
+  <circle cx="50" cy="50" r="49" fill="none" stroke="rgba(196,96,58,0.25)" stroke-width="1.5"/>
+</svg>

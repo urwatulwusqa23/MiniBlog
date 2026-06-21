@@ -1,0 +1,83 @@
+﻿
+body {
+    font-family: 'Arial', sans-serif;
+    background-image: url('../Images/781e0771841034f0c61ed86238686083.jpg'); /* Replace with the path to your image */
+    background-size: cover;
+    background-attachment: fixed; /* Keep background fixed while scrolling */
+    margin: 0;
+    padding: 0;
+    color: #333; /* Neutral text color */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the content horizontally */
+    min-height: 100vh; /* Ensure the page takes full viewport height */
+}
+
+/* Heading Style */
+h1 {
+    font-size: 32px;
+    color: #6a11cb; /* Purple heading */
+    text-align: center;
+    margin-top: 30px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Add a shadow for pop */
+}
+
+/* Followers List */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 30px 0;
+    width: 100%;
+    max-width: 600px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    padding: 20px;
+    animation: fadeIn 1.5s ease-in-out; /* Fade-in animation */
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    background: rgba(240, 240, 240, 0.9); /* Light pastel background for list items */
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for list items */
+}
+
+    li:last-child {
+        margin-bottom: 0; /* Remove bottom margin for the last item */
+    }
+
+/* Fade-In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px); /* Slight upward movement */
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    ul {
+        padding: 15px;
+    }
+
+    li {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+}
+
